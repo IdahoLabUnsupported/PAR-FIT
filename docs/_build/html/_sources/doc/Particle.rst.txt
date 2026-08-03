@@ -1,0 +1,4 @@
+Particle Library
+============================
+
+.. autofunction:: Score.calculate_rmspe_score

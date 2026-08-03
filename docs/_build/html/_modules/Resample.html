@@ -1,0 +1,481 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resample &mdash; Particle Filter for Inference Testing 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Particle Filter for Inference Testing
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Instructions.html">Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Transient_Example.html">Transient Example</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Swarm.html">Swarm (Particle Filter)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Particle.html">Particle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Scoring.html">Scoring Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Weighting.html">Weighting Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Resample.html">Resampling Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Resample.html#preprocessing-resampling-functions">Preprocessing Resampling Functions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Particle Filter for Inference Testing</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">Resample</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Resample</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Tue Nov  4 13:04:33 2025</span>
+
+<span class="sd">Copyright 2026, Battelle Energy Alliance, LLC, ALL RIGHTS RESERVED</span>
+
+<span class="sd">@author: Edward Chen</span>
+<span class="sd">@email: edward.chen@inl.gov</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Default libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="c1"># Install libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Explicit libraries</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Particle</span><span class="w"> </span><span class="kn">import</span> <span class="n">Particle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Weighting</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_weights</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">resample_population</span><span class="p">(</span><span class="n">swarm</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">weighting</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Support function that performs the resampling given the particle indices and weights. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    swarm : Swarm</span>
+<span class="sd">        Instance of Swarm, the particle filter to resample from.</span>
+<span class="sd">    indices : numpy.ndarray</span>
+<span class="sd">        Array of particle indices to be replaced.</span>
+<span class="sd">    weighting : numpy.ndarray</span>
+<span class="sd">        Array of weights of all particles.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">swarm</span><span class="o">.</span><span class="n">num_particles</span>
+    
+    <span class="c1"># Repopulate with new samples using existing samples only</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+        <span class="c1"># Get new particle information</span>
+        <span class="n">new_tag</span> <span class="o">=</span> <span class="n">swarm</span><span class="o">.</span><span class="n">particles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tag</span>
+        <span class="n">new_idx</span> <span class="o">=</span> <span class="n">swarm</span><span class="o">.</span><span class="n">particles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+        
+        <span class="c1"># Track information for external validation</span>
+        <span class="n">swarm</span><span class="o">.</span><span class="n">tags_tracker</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_tag</span><span class="p">)</span>
+        <span class="n">swarm</span><span class="o">.</span><span class="n">index_tracker</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_idx</span><span class="p">)</span>
+            
+        <span class="c1"># Deep copy to avoid shared references</span>
+        <span class="n">copied_particle</span> <span class="o">=</span> <span class="n">Particle</span><span class="p">(</span><span class="n">new_tag</span><span class="p">,</span> <span class="n">new_idx</span><span class="p">,</span> <span class="n">initial_score</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">N</span><span class="p">)</span>
+             
+        <span class="c1"># Replace particle with new particle</span>
+        <span class="n">swarm</span><span class="o">.</span><span class="n">particles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">copied_particle</span>    
+    
+    <span class="c1"># Check if replacement rate is active which determines how many new samples to draw from the entire dataset</span>
+    <span class="k">if</span> <span class="n">swarm</span><span class="o">.</span><span class="n">replacement_rate</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Determine how many particles to replace</span>
+        <span class="n">size</span>           <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">swarm</span><span class="o">.</span><span class="n">replacement_rate</span> <span class="o">*</span> <span class="n">swarm</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)</span>
+
+        <span class="c1"># Sort resampled particles by original weight (descending)</span>
+        <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">weighting</span><span class="p">)</span>
+        <span class="n">worst_indices</span>  <span class="o">=</span> <span class="n">sorted_indices</span><span class="p">[:</span><span class="n">size</span><span class="p">]</span>
+        
+        <span class="c1"># Get all possible particle tags and index values</span>
+        <span class="n">keys_tag</span>    <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">swarm</span><span class="o">.</span><span class="n">tag_dist</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">keys_index</span>  <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">swarm</span><span class="o">.</span><span class="n">index_dist</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                
+        <span class="n">resample_tags</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">keys_tag</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">resample_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">keys_index</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span> 
+          
+        <span class="c1"># Replace bottom particles with resampled copies of top particles</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">new_tag</span><span class="p">,</span> <span class="n">new_idx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">worst_indices</span><span class="p">,</span> <span class="n">resample_tags</span><span class="p">,</span> <span class="n">resample_index</span><span class="p">):</span>
+            <span class="c1"># Deep copy to avoid shared references</span>
+            <span class="n">copied_particle</span> <span class="o">=</span> <span class="n">Particle</span><span class="p">(</span><span class="n">new_tag</span><span class="p">,</span> <span class="n">new_idx</span><span class="p">,</span> <span class="n">initial_score</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">N</span><span class="p">)</span>
+        
+            <span class="c1"># Replace particle with new particle</span>
+            <span class="n">swarm</span><span class="o">.</span><span class="n">particles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">copied_particle</span>
+    
+    <span class="k">return</span>
+            
+<div class="viewcode-block" id="resample_multinomial">
+<a class="viewcode-back" href="../Resample.html#Resample.resample_multinomial">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resample_multinomial</span><span class="p">(</span><span class="n">swarm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This resampler draws N independent random numbers from a uniform distribution relative to the weights of each particle. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    swarm : Swarm</span>
+<span class="sd">        Instance of Swarm, the particle filter to resample from.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        The number of particles must be a natural number. Weights must be non-negative and finite. </span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    indices (optional) : numpy.ndarray</span>
+<span class="sd">        Returns the new list of particle indices after resampling.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="c1"># Get current weight function, check weight function is normalized.</span>
+    <span class="n">weighting</span> <span class="o">=</span> <span class="n">swarm</span><span class="o">.</span><span class="n">weights</span>
+
+    <span class="c1"># Check for correct shape</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">swarm</span><span class="o">.</span><span class="n">num_particles</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">weighting</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">M</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of particles/weights must be a positive integer number.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Handle edge cases</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">weighting</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">weighting</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Weights must be non-negative and finite.&quot;</span><span class="p">)</span>
+    
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">weighting</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="n">total</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">total</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: Weight matrix normalization error. Sum of weights is: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">weighting</span><span class="p">)))</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">normalize_weights</span><span class="p">(</span><span class="n">weighting</span><span class="p">)</span>
+            
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot normalize weight matrix. Defaulting to uniform distribution for resampling&quot;</span><span class="p">)</span>
+        
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">weighting</span> <span class="o">/</span> <span class="n">total</span>
+        
+    <span class="c1"># Build CDF </span>
+    <span class="n">cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+    <span class="n">cdf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># Ensure exact endpoints to handle numerical drift.</span>
+    
+    <span class="c1"># Draw N new particles to replace existing particles</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+    
+    <span class="n">resample_population</span><span class="p">(</span><span class="n">swarm</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">weighting</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">indices</span></div>
+
+    
+<div class="viewcode-block" id="resample_systematic">
+<a class="viewcode-back" href="../Resample.html#Resample.resample_systematic">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resample_systematic</span><span class="p">(</span><span class="n">swarm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method resamples particles based on their weights while maintaining diversity in particle values, preventing degeneracy. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    swarm : Swarm</span>
+<span class="sd">        Instance of Swarm, the particle filter to resample from.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        The number of particles must be a natural number. Weights must be non-negative and finite.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    indices (optional) : numpy.ndarray</span>
+<span class="sd">        Returns the new list of particle indices after resampling.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get current weight function, check weight function is normalized.</span>
+    <span class="n">weighting</span> <span class="o">=</span> <span class="n">swarm</span><span class="o">.</span><span class="n">weights</span>
+    
+    <span class="c1"># Check for correct shape</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">swarm</span><span class="o">.</span><span class="n">num_particles</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">weighting</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">M</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of particles/weights must be a positive integer number.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Handle edge cases</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">weighting</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">weighting</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Weights must be non-negative and finite.&quot;</span><span class="p">)</span>
+        
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">weighting</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="n">total</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">total</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: Weight matrix normalization error. Sum of weights is: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">weighting</span><span class="p">)))</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">normalize_weights</span><span class="p">(</span><span class="n">weighting</span><span class="p">)</span>
+            
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot normalize weight matrix. Defaulting to uniform distribution for resampling&quot;</span><span class="p">)</span>
+        
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">weighting</span> <span class="o">/</span> <span class="n">total</span>
+        
+    <span class="c1"># Build CDF </span>
+    <span class="n">cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+    <span class="n">cdf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># Ensure exact endpoints to handle numerical drift.</span>
+
+    <span class="c1"># equally spaced positions with a single random offset</span>
+    <span class="n">u0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="n">u0</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span>
+
+    <span class="c1"># find indices: for each position, locate first cumulative &gt;= position</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+    
+    <span class="n">resample_population</span><span class="p">(</span><span class="n">swarm</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">weighting</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">indices</span></div>
+
+    
+<div class="viewcode-block" id="resample_stratified">
+<a class="viewcode-back" href="../Resample.html#Resample.resample_stratified">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resample_stratified</span><span class="p">(</span><span class="n">swarm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method resamples particles from N equal partitions, with one random sample per partition.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    swarm : Swarm</span>
+<span class="sd">        Instance of Swarm, the particle filter to resample from.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        The number of particles must be a natural number. Weights must be non-negative and finite.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    indices (optional) : numpy.ndarray</span>
+<span class="sd">        Returns the new list of particle indices after resampling.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get current weight function, check weight function is normalized.</span>
+    <span class="n">weighting</span> <span class="o">=</span> <span class="n">swarm</span><span class="o">.</span><span class="n">weights</span>
+    
+    <span class="c1"># Check for correct shape</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">swarm</span><span class="o">.</span><span class="n">num_particles</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">weighting</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">M</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of particles/weights must be a positive integer number.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Handle edge cases</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">weighting</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">weighting</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Weights must be non-negative and finite.&quot;</span><span class="p">)</span>
+        
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">weighting</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="n">total</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">total</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: Weight matrix normalization error. Sum of weights is: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">weighting</span><span class="p">)))</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">normalize_weights</span><span class="p">(</span><span class="n">weighting</span><span class="p">)</span>
+            
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot normalize weight matrix. Defaulting to uniform distribution for resampling&quot;</span><span class="p">)</span>
+        
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">weighting</span> <span class="o">/</span> <span class="n">total</span>
+        
+    <span class="c1"># Build CDF </span>
+    <span class="n">cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+    <span class="n">cdf</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># Ensure exact endpoints to handle numerical drift.</span>
+
+    <span class="c1"># Equally spaced positions with a single random offset</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">N</span><span class="p">))</span> <span class="o">/</span> <span class="n">N</span>
+
+    <span class="c1"># find indices: for each position, locate first cumulative &gt;= position</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+    
+    <span class="n">resample_population</span><span class="p">(</span><span class="n">swarm</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">weighting</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">indices</span></div>
+
+
+<div class="viewcode-block" id="resample_threshold">
+<a class="viewcode-back" href="../Resample.html#Resample.resample_threshold">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resample_threshold</span><span class="p">(</span><span class="n">swarm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method resamples particles from N equal partitions, with one random sample per partition.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    swarm : Swarm</span>
+<span class="sd">        Instance of Swarm, the particle filter to resample from.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        The number of particles must be a natural number. Weights must be non-negative and finite.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Replace if threshold is not met either</span>
+    <span class="k">for</span> <span class="n">pt_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">swarm</span><span class="o">.</span><span class="n">particles</span><span class="p">)):</span>
+        <span class="n">pt_weight</span> <span class="o">=</span> <span class="n">swarm</span><span class="o">.</span><span class="n">particles</span><span class="p">[</span><span class="n">pt_idx</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span>
+        
+        <span class="c1"># Discard and regenerate if weight is less than threshold</span>
+        <span class="k">if</span> <span class="n">pt_weight</span> <span class="o">&gt;</span> <span class="n">swarm</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
+            <span class="c1"># Randomly get a new particle location</span>
+            <span class="n">new_tag</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">swarm</span><span class="o">.</span><span class="n">tags_list</span><span class="p">)</span>
+            <span class="n">new_idx</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">swarm</span><span class="o">.</span><span class="n">index_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">swarm</span><span class="o">.</span><span class="n">index_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+             
+            <span class="c1"># Create new particle</span>
+            <span class="n">new_particle</span> <span class="o">=</span> <span class="n">Particle</span><span class="p">(</span><span class="n">new_tag</span><span class="p">,</span> <span class="n">new_idx</span><span class="p">,</span> <span class="n">initial_score</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">swarm</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)</span>
+             
+            <span class="c1"># Replace particle with new particle</span>
+            <span class="n">swarm</span><span class="o">.</span><span class="n">particles</span><span class="p">[</span><span class="n">pt_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_particle</span>
+            
+    <span class="k">return</span></div>
+
+            
+<div class="viewcode-block" id="resample_ESS">
+<a class="viewcode-back" href="../Resample.html#Resample.resample_ESS">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resample_ESS</span><span class="p">(</span><span class="n">swarm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if effective sample size condition is met for resampling</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    swarm : Swarm</span>
+<span class="sd">        Instance of Swarm, the particle filter to resample from.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        Determines if resampling is needed. If true, a resampler algorithm should be used, if false, particles are not resampled.</span>
+<span class="sd">    Ntest : float</span>
+<span class="sd">        The test value generated to determine if resampling is needed. Ntest &lt;= N/2 is the specified limit. </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">scores</span>    <span class="o">=</span> <span class="n">swarm</span><span class="o">.</span><span class="n">scores</span>
+    <span class="n">weighting</span> <span class="o">=</span> <span class="n">swarm</span><span class="o">.</span><span class="n">weights</span>
+    <span class="n">Neff</span>  <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>   <span class="c1"># limit to resample</span>
+    <span class="n">Ntest</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">weighting</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">Ntest</span> <span class="o">&lt;=</span> <span class="n">Neff</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">Ntest</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">Ntest</span></div>
+
+
+<div class="viewcode-block" id="resample_RR">
+<a class="viewcode-back" href="../Resample.html#Resample.resample_RR">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resample_RR</span><span class="p">(</span><span class="n">swarm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Not implemented</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+              
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Edward Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

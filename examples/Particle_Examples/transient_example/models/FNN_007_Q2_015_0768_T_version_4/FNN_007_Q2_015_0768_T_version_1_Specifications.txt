@@ -1,0 +1,19 @@
+******************MODEL CONFIGURATION******************
+Date of Creation: 2023-11-10
+Model name: FNN_007_Q2_015_0768_T_version_1
+
+Input dimension: 2
+Hidden layers: 3
+Nodes per hidden layer: 30
+Output dimension: 1
+
+******************TRAINING CONFIGURATION******************
+Number of epochs: 5000
+Learning rate: 0.001
+Loss function: MSE
+Training set size: 70
+Training set origin: FNN_007_Q2_015_0768_T_version_1.csv
+Batch size: 128
+Stop loss: 1e-10
+Weight decay: 4.566861709718853e-05
+Model post training error: 24.575366973876953

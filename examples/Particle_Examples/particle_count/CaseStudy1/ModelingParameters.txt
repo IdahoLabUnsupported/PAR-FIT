@@ -1,0 +1,54 @@
+SCORING = "logc"
+# Valid Scoring methods
+# exp = exponential decay
+# rmspe = root mean square percent error
+# mape = mean absolute percent error
+# logc = log cosh error
+
+# Weight method *Tested, all work
+WEIGHTING = "logistic"
+# exp = exponential decay (similar to Gaussian weighting)
+# logistic = logistic
+# linear = linear triangle
+
+# Resample method
+RESAMP = "Systematic"
+# Multinomial = uniform distribution resampling based on CDF weights.
+# Systematic  = uses evenly spaced positions in the CDF for resampling.
+# Stratified  = separates in even partitions then draws one sample from each partition. 
+# Threshold   = limit based resampling using weights 
+
+# (Optional) Threshold for replacement
+# This value is used a hard replacement criteria. 
+if RESAMP.lower() == "threshold":
+    THRESHOLD = 0.5
+
+# Pre-sampling method
+PREPROC  = "None"
+# ESS = Effective Sample Size
+
+# Folder containing CSV files
+CSV_FOLDER = "../../../datasets/016_Q8_175_5000_trimmed/"
+
+# MODIFY HERE; CHOOSE A CSV FILE
+CSV_FILE = "histories_9.csv"
+
+# Columns to track
+COLS = ["FL1", "FL6", "TA21s1", "TL14s1", "PS1", "PS2"]
+
+# Valid Columns    
+# FL1 = Pump 1 flow rate
+# FL6 = Pump 2 flow rate
+# TL14s1 = Upper plenum temperature
+# TA21s1 = Fuel centerline temperature
+# PS1 = Pump 1 pump speed
+# PS2 = Pump 2 pump speed
+# TFL = Total core flow rate (FL1 + FL6)
+
+# Replacement percentage; 
+# Determines the percentage of worst performing particles to randomly replace regardless. Prevents degeneracy of particles.
+REPLACE = 0.15
+
+# Cutoff percentatge
+# Not all particles are relevant, this value eliminates a percentage of the worst particles from the mean and SPRT calculation. 
+CUTOFF = 0.25

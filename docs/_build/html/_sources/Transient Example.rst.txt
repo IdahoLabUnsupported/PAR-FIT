@@ -1,0 +1,3 @@
+Transient Example (Fault)	
+----------------------------
+In this example, the GOTHIC simulation of the EBR-2 reactor is used to model a loss of flow transient. The particle filter is also used to forecast the future state of the reactor using current information.  

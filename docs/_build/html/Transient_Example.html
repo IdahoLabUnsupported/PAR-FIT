@@ -1,0 +1,252 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transient Example &mdash; Particle Filter for Inference Testing 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Swarm (Particle Filter)" href="Swarm.html" />
+    <link rel="prev" title="Example" href="Example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Particle Filter for Inference Testing
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Instructions.html">Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example.html">Example</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Transient Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#transient-fault-description">Transient Fault Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#instructions">Instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#output">Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Swarm.html">Swarm (Particle Filter)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Particle.html">Particle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Scoring.html">Scoring Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Weighting.html">Weighting Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Resample.html">Resampling Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Resample.html#preprocessing-resampling-functions">Preprocessing Resampling Functions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Particle Filter for Inference Testing</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Transient Example</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Transient_Example.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="transient-example">
+<h1>Transient Example<a class="headerlink" href="#transient-example" title="Link to this heading"></a></h1>
+<p>In this example, the GOTHIC simulation of the EBR-2 reactor is used to model a loss of flow transient. EBR-2 is a pool type sodium fast reactor. As the name implies, the coolant is stored in a pool which maintains a consistent temperature for all submerged components. The simulation consists of two sodium coolant pumps which draws from the pool and feeds into the EBR2 core block. The core consists of a lower plenum where the coolant mixes and flows into the core region where the fuel rods are located. The coolant ideally cools the fuel rods and maintains a temperature lower than 700C. At the top of the core block is the upper plenum where the coolant mixes again and travel to the heat exchanger. The heat exchanger dissipates the heat to an unmodeled secondary system (e.g., steam generator) and dumps the remaining hot coolant back into the pool. A diagram of the model is shown in <a class="reference internal" href="#ebr2-drawing"><span class="std std-numref">Figure 18</span></a>.</p>
+<figure class="align-center" id="ebr2-drawing">
+<a class="reference internal image-reference" href="_images/EBR2_Drawing.png"><img alt="text" src="_images/EBR2_Drawing.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 18 </span><span class="caption-text">High level overview of EBR2 drawing with variables mapped.</span><a class="headerlink" href="#ebr2-drawing" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The parameters used in the EBR2 model include:</p>
+<ul class="simple">
+<li><p>Pump rotational speed (<span class="math notranslate nohighlight">\(\omega\)</span>/s): PS1 &amp; PS2</p></li>
+<li><p>Pump exit flow rate (kg/s): FL1 &amp; FL6</p></li>
+<li><p>Total core flow rate (kg/s): TFL (FL1+FL6)</p></li>
+<li><p>Upper plenum temperature (C): TL14s1</p></li>
+<li><p>Peak fuel centerline temperature (C): TA21s1</p></li>
+</ul>
+<p>Here, only the peak fuel centerline temperature is an unmeasurable quantity (in real life) as placement of sensors in the fuel bundle is an engineering challenge. Therefore, we would like to use measurable parameters (e.g., TFL and TL14s1) to infer what the fuel centerline temperature could be. The GOTHIC model is used to generate a plausible fuel centerline temperature which will be used to train a predictive model.</p>
+<p>A feedforward neural network (FNN) is implemented as the predictive model. The input to the neural network are the measurable parameters FL1, FL6, and TL14s1. More parameters can be used, however a Pearson correlation of measurable parameters to the unmeasurable parameters indicates that FL1, Fl6, and TL14s1 has the highest correlation (i.e., most indicative of temperature).</p>
+<p>The particle filter is used here to determine: a) the future state of the fuel centerline temperature (i.e., forecasting), b) the uncertainty of the each individual parameter, and c) the reactor state (normal or abnormal) during the course of the transient.</p>
+<p>The framework for this example is shown in <a class="reference internal" href="#flowdiagram"><span class="std std-numref">Figure 19</span></a>.</p>
+<figure class="align-center" id="flowdiagram">
+<a class="reference internal image-reference" href="_images/FlowDiagram.png"><img alt="text" src="_images/FlowDiagram.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 19 </span><span class="caption-text">Framework connecting the FNN with the particle filter.</span><a class="headerlink" href="#flowdiagram" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>From A-H:</p>
+<ol class="upperalpha simple">
+<li><p>This is the mock data that simulates new real time information arriving into the framework. The timestep size is 0.1 seconds per step. The incoming information is a transient that is not within the reference dataset (B).</p></li>
+<li><p>This the simulator dataset that was constructed using EBR2. A variety of different scenarios is posited and modelled. However, the dataset is not comprehensive and not intended to represent an exhaustive search of possible actions, only reasonable actions that an plant operator may take.</p></li>
+<li><p>The reference dataset is used to train a FNN. The FNN uses the pump flow rates (FL1 &amp; FL6) and the upper plenum temperature (TL14s1) to predict the fuel centerline temperature (TA21s1). In this example, the performance of the FNN is irrelevant; if the FNN predicts poorly, then the particle filter should identify more samples as abnormal and vice versus.</p></li>
+<li><p>Whatever was used to train the FNN is used as the reference data for the particle filter. The assumption is that some degree of validation was performed on the reference data and is believed to be correct. This reference data can be swapped with real operational data if it exists and can be collected.</p></li>
+<li><p>This is the particle filter. The particle filter receives several values, both from the incoming data and the FNN output. The particle filter compares all information available to the reference dataset to make a determination of reactor state.</p></li>
+<li><p>The output of particle filter (from a controls perspective) is the SPRT state decision. If the SPRT state is normal, then the output is routed to the correct downstream systems (denoted as H). If the SPRT state is abnormal, then the output is routed to a protection system (denoted as G).</p></li>
+</ol>
+<ol class="upperalpha simple" start="8">
+<li><p>Indicator of normal state of plant.</p></li>
+</ol>
+<ol class="upperalpha simple" start="7">
+<li><p>Indicator of abnormal state of plant.</p></li>
+</ol>
+<section id="transient-fault-description">
+<h2>Transient Fault Description<a class="headerlink" href="#transient-fault-description" title="Link to this heading"></a></h2>
+<p>The datasets were gathered and simulated using a GOTHIC model of the Experimental Breeder Reactor-II (EBR-II) [Lane2020]. In EBR-II, two separate primary sodium pumps (denoted as P1 and P2), provide coolant flow through the core. In the postulated transient scenario, P1 partially loses pump rotational speed, thus decreasing the overall coolant flow through the core block. The scenario is monitored by a supervisory system (unmodelled). Based on the supervisory system’s automated response, the rotational speed of P2 is increased to compensate. The scope of the numerical demonstration can be represented by the time-dependent curve of the rotational speed of P1 seen below.</p>
+<div class="math notranslate nohighlight">
+\[\omega_1(t) = \omega_0(1-\frac{1-(\omega_1)_{end}}{T_1}t_0)\]</div>
+<p>Here <span class="math notranslate nohighlight">\(\omega_0\)</span> is the nominal pump speed, <span class="math notranslate nohighlight">\(T_1\)</span> is the ramp-down duration, <span class="math notranslate nohighlight">\((\omega_1)_{end}\)</span> is the normalized P1 end speed, and <span class="math notranslate nohighlight">\(t_0\)</span> is the transient start time.</p>
+</section>
+<section id="instructions">
+<h2>Instructions<a class="headerlink" href="#instructions" title="Link to this heading"></a></h2>
+<p>To run this example, follow the below instructions:</p>
+<ol class="arabic simple" start="0">
+<li><p>(Pre-step) This example requires pytorch, matplotlib, pandas, numpy, and celluloid to generate the associated figures and images. Pip install these modules if not already installed.</p></li>
+<li><p>Navigate to DARE/Examples/Particle_Examples/transient_example/transient_example.py</p></li>
+<li><p>In the command line of your python, run below. This ensures that images are generated in a new window rather than in the IDE window. This is primarily for the forcasting GIF.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">matplotlib</span> <span class="n">qt</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Run the code. This code may take some time as image processing and parametric tracking are resource intensive. It should take approximately 133 seconds to complete.</p></li>
+</ol>
+<p>Issues:</p>
+<ul class="simple">
+<li><p><cite>The code runs too slowly?</cite> Find the line <cite>NUM_PARTICLES</cite> and reduce to 50. This should speed up the calculation without significant degradation of performance.</p></li>
+<li><p><cite>The code doesn’t run, modules are missing?</cite> See pre-step for package requirements.</p></li>
+<li><p><cite>The GIF is a static image?</cite> The GIF needs a separate window to appear properly. Use the <cite>matplotlib qt</cite> code line to force new plotting windows. See Step 2.</p></li>
+</ul>
+</section>
+<section id="output">
+<h2>Output<a class="headerlink" href="#output" title="Link to this heading"></a></h2>
+<p>After running the code, the following images should be generated <a class="reference internal" href="#transient-fl19"><span class="std std-numref">Figure 20</span></a>, <a class="reference internal" href="#transient-tl14s1"><span class="std std-numref">Figure 21</span></a>, <a class="reference internal" href="#transient-ta21s1"><span class="std std-numref">Figure 22</span></a>, <a class="reference internal" href="#transient-sprt"><span class="std std-numref">Figure 23</span></a>, and <a class="reference internal" href="#rt-transient"><span class="std std-numref">Figure 24</span></a>.</p>
+<figure class="align-center" id="transient-fl19">
+<a class="reference internal image-reference" href="_images/0768_Transient_FL19.png"><img alt="text" src="_images/0768_Transient_FL19.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 20 </span><span class="caption-text">Total core flow rate particle filter tracking.</span><a class="headerlink" href="#transient-fl19" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="transient-tl14s1">
+<a class="reference internal image-reference" href="_images/0768_Transient_TL14s1.png"><img alt="text" src="_images/0768_Transient_TL14s1.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 21 </span><span class="caption-text">Upper plenum temperature particle filter tracking.</span><a class="headerlink" href="#transient-tl14s1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="transient-ta21s1">
+<a class="reference internal image-reference" href="_images/0768_Transient_TA21s1.png"><img alt="text" src="_images/0768_Transient_TA21s1.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 22 </span><span class="caption-text">Fuel centerline temperature model prediction with particle filter tracking.</span><a class="headerlink" href="#transient-ta21s1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="transient-sprt">
+<a class="reference internal image-reference" href="_images/0768_Transient_SPRT.png"><img alt="text" src="_images/0768_Transient_SPRT.png" style="width: 800px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 23 </span><span class="caption-text">SPRT output on fuel centerline temperature prediction with particle filter.</span><a class="headerlink" href="#transient-sprt" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="rt-transient">
+<a class="reference internal image-reference" href="_images/RT_Transient.gif"><img alt="text" src="_images/RT_Transient.gif" style="width: 700px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 24 </span><span class="caption-text">Forcasting using particle filter.</span><a class="headerlink" href="#rt-transient" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<div role="list" class="citation-list">
+<div class="citation" id="lane2020" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Lane2020<span class="fn-bracket">]</span></span>
+<ol class="upperalpha simple" start="10">
+<li><ol class="upperalpha simple" start="23">
+<li><p>Lane, J. M. Link, J. M. King, T. L. George and S. W. Claybrook, “Benchmark of GOTHIC to EBR-II SHRT-17 and SHRT-45R Tests,” Nuclear Technology, vol. 206, no. 7, pp. 1019-1035, 2020.</p></li>
+</ol>
+</li>
+</ol>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Example.html" class="btn btn-neutral float-left" title="Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Swarm.html" class="btn btn-neutral float-right" title="Swarm (Particle Filter)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Edward Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

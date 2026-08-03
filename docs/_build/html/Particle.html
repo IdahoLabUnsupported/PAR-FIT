@@ -1,0 +1,266 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Particle &mdash; Particle Filter for Inference Testing 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Scoring Library" href="Scoring.html" />
+    <link rel="prev" title="Swarm (Particle Filter)" href="Swarm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Particle Filter for Inference Testing
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Instructions.html">Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Transient_Example.html">Transient Example</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Details</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Swarm.html">Swarm (Particle Filter)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Particle</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#initialization">Initialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Particle.Particle"><code class="docutils literal notranslate"><span class="pre">Particle</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Particle.Particle.tag"><code class="docutils literal notranslate"><span class="pre">Particle.tag</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Particle.Particle.index"><code class="docutils literal notranslate"><span class="pre">Particle.index</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Particle.Particle.current"><code class="docutils literal notranslate"><span class="pre">Particle.current</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Particle.Particle.score"><code class="docutils literal notranslate"><span class="pre">Particle.score</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Particle.Particle.calculate_score"><code class="docutils literal notranslate"><span class="pre">Particle.calculate_score()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Particle.Particle.forward"><code class="docutils literal notranslate"><span class="pre">Particle.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Particle.Particle.get_index"><code class="docutils literal notranslate"><span class="pre">Particle.get_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Particle.Particle.get_tag"><code class="docutils literal notranslate"><span class="pre">Particle.get_tag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Particle.Particle.set_index"><code class="docutils literal notranslate"><span class="pre">Particle.set_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Particle.Particle.set_tag"><code class="docutils literal notranslate"><span class="pre">Particle.set_tag()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Scoring.html">Scoring Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Weighting.html">Weighting Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Resample.html">Resampling Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Resample.html#preprocessing-resampling-functions">Preprocessing Resampling Functions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Particle Filter for Inference Testing</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Particle</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Particle.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="particle">
+<h1>Particle<a class="headerlink" href="#particle" title="Link to this heading"></a></h1>
+<p>This page contains the class named Particle. Each Particle object stores information related to a search instance.</p>
+<section id="initialization">
+<h2>Initialization<a class="headerlink" href="#initialization" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="Particle.Particle">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Particle.</span></span><span class="sig-name descname"><span class="pre">Particle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Particle.html#Particle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Particle.Particle" title="Link to this definition"></a></dt>
+<dd><p>A class to store information about a data point. Acts as a particle in the filter.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Particle.Particle.tag">
+<span class="sig-name descname"><span class="pre">tag</span></span><a class="headerlink" href="#Particle.Particle.tag" title="Link to this definition"></a></dt>
+<dd><p>The name of the file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Particle.Particle.index">
+<span class="sig-name descname"><span class="pre">index</span></span><a class="headerlink" href="#Particle.Particle.index" title="Link to this definition"></a></dt>
+<dd><p>The index value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Particle.Particle.current">
+<span class="sig-name descname"><span class="pre">current</span></span><a class="headerlink" href="#Particle.Particle.current" title="Link to this definition"></a></dt>
+<dd><p>The determined value by this particle</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Particle.Particle.score">
+<span class="sig-name descname"><span class="pre">score</span></span><a class="headerlink" href="#Particle.Particle.score" title="Link to this definition"></a></dt>
+<dd><p>The calculated score value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initialize a Particle object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tag</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">string</span></code>) – The name of the file. This is used to find the corresponding data to search from.</p></li>
+<li><p><strong>index</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The index value to search the file.</p></li>
+<li><p><strong>initial_score</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The initial score of a particle. Do not use zero, recommend (1/number of particles) to prevent selection errors.</p></li>
+<li><p><strong>weight</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <em>optional</em>) – The current selection probability for this particle. The default is 0 for new particles. Assigned at runtime.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">None.</span></code></p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="Particle.Particle.calculate_score">
+<span class="sig-name descname"><span class="pre">calculate_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">true_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rmspe'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Particle.html#Particle.calculate_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Particle.Particle.calculate_score" title="Link to this definition"></a></dt>
+<dd><p>Assigns a score to the particle relative to a measured or true value (true_value). Output is for testing only and not used by the particle filter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>true_value</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – The sensor value to compare the particle value to.</p></li>
+<li><p><strong>method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em>) – Determines the type of method to use to calculate score.. The default is “rmspe”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The calculated score value based on the selected error function and provided measured or true value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span> <span class="pre">(optional)</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Particle.Particle.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Particle.html#Particle.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Particle.Particle.forward" title="Link to this definition"></a></dt>
+<dd><p>Moves the particle foward in the same dataset and increment life</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>max_idx</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Maximum index of the reference datafile. If a CSV has 200 rows, then max_idx=200. Assigned automatically by code.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">None.</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Particle.Particle.get_index">
+<span class="sig-name descname"><span class="pre">get_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Particle.html#Particle.get_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Particle.Particle.get_index" title="Link to this definition"></a></dt>
+<dd><p>Get the index value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Particle.Particle.get_tag">
+<span class="sig-name descname"><span class="pre">get_tag</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Particle.html#Particle.get_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Particle.Particle.get_tag" title="Link to this definition"></a></dt>
+<dd><p>Get the tag value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Particle.Particle.set_index">
+<span class="sig-name descname"><span class="pre">set_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Particle.html#Particle.set_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Particle.Particle.set_index" title="Link to this definition"></a></dt>
+<dd><p>Set the index value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Particle.Particle.set_tag">
+<span class="sig-name descname"><span class="pre">set_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Particle.html#Particle.set_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Particle.Particle.set_tag" title="Link to this definition"></a></dt>
+<dd><p>Set the tag value.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Swarm.html" class="btn btn-neutral float-left" title="Swarm (Particle Filter)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Scoring.html" class="btn btn-neutral float-right" title="Scoring Library" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Edward Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

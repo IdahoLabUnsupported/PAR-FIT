@@ -1,0 +1,301 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Particle &mdash; Particle Filter for Inference Testing 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Particle Filter for Inference Testing
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Instructions.html">Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Transient_Example.html">Transient Example</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Swarm.html">Swarm (Particle Filter)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Particle.html">Particle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Scoring.html">Scoring Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Weighting.html">Weighting Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Resample.html">Resampling Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Resample.html#preprocessing-resampling-functions">Preprocessing Resampling Functions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Particle Filter for Inference Testing</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">Particle</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Particle</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Tue Oct 21 15:16:39 2025</span>
+
+<span class="sd">Copyright 2026, Battelle Energy Alliance, LLC, ALL RIGHTS RESERVED</span>
+
+<span class="sd">@author: Edward Chen</span>
+<span class="sd">@email: edward.chen@inl.gov</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Default libraries</span>
+
+
+<span class="c1"># Install libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Explicit libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">Scoring</span>
+
+<div class="viewcode-block" id="Particle">
+<a class="viewcode-back" href="../Particle.html#Particle.Particle">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Particle</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to store information about a data point. Acts as a particle in the filter.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        tag (str): The name of the file</span>
+<span class="sd">        index (int): The index value</span>
+<span class="sd">        current (dict): The determined value by this particle</span>
+<span class="sd">        score (int): The calculated score value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">initial_score</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a Particle object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tag : string</span>
+<span class="sd">            The name of the file. This is used to find the corresponding data to search from.</span>
+<span class="sd">        index : int</span>
+<span class="sd">            The index value to search the file.</span>
+<span class="sd">        initial_score : float</span>
+<span class="sd">            The initial score of a particle. Do not use zero, recommend (1/number of particles) to prevent selection errors.</span>
+<span class="sd">        weight : float, optional</span>
+<span class="sd">            The current selection probability for this particle. The default is 0 for new particles. Assigned at runtime.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag</span>      <span class="o">=</span> <span class="n">tag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span>    <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">score</span>    <span class="o">=</span> <span class="n">initial_score</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span>   <span class="o">=</span> <span class="n">weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">duration</span>       <span class="c1"># How long to remember previous time steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current</span>  <span class="o">=</span> <span class="kc">None</span>           <span class="c1"># Assigned at run time by swarm. Does not need to be assigned.</span>
+        
+<div class="viewcode-block" id="Particle.calculate_score">
+<a class="viewcode-back" href="../Particle.html#Particle.Particle.calculate_score">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">true_value</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;rmspe&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assigns a score to the particle relative to a measured or true value (true_value). Output is for testing only and not used by the particle filter.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        true_value : dict</span>
+<span class="sd">            The sensor value to compare the particle value to.</span>
+<span class="sd">        method : string, optional</span>
+<span class="sd">            Determines the type of method to use to calculate score.. The default is &quot;rmspe&quot;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float (optional)</span>
+<span class="sd">            The calculated score value based on the selected error function and provided measured or true value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>            
+        
+        <span class="c1"># Error handling</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            
+            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;rmspe&quot;</span><span class="p">:</span>
+                <span class="c1"># Calculate score using mean square error; score must be single numerical value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">Scoring</span><span class="o">.</span><span class="n">calculate_rmspe_score</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">,</span> <span class="n">true_value</span><span class="p">)</span>
+            
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;mape&quot;</span><span class="p">:</span>
+                <span class="c1"># Calculate score using normalized absolute error; score must be single numerical value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">Scoring</span><span class="o">.</span><span class="n">calculate_mape_score</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">,</span> <span class="n">true_value</span><span class="p">)</span>         
+            
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;exp&quot;</span><span class="p">:</span>
+                <span class="c1"># Calculate score using laplacian distance; score must be single numerical value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">Scoring</span><span class="o">.</span><span class="n">calculate_exp_score</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">,</span> <span class="n">true_value</span><span class="p">)</span>  
+            
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;logc&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">Scoring</span><span class="o">.</span><span class="n">calculate_logCosh_score</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">,</span> <span class="n">true_value</span><span class="p">)</span>  
+          
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error function not selected. Choose from root mean square percent error (rmspe), mean absolute percent error (mape), exponential error (exp), or log cosh error (logc)&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error function not valid. Choose from root mean square percent error (rmspe), mean absolute percent error (mape), exponential error (exp), or log cosh error (logc)&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span></div>
+
+    
+<div class="viewcode-block" id="Particle.forward">
+<a class="viewcode-back" href="../Particle.html#Particle.Particle.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Moves the particle foward in the same dataset and increment life</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        max_idx : int</span>
+<span class="sd">            Maximum index of the reference datafile. If a CSV has 200 rows, then max_idx=200. Assigned automatically by code. </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="n">max_idx</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span></div>
+
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__check_shape__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">true_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the two arrays are the same shape&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">true_value</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;String representation of the Particle.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;DataPoint(tag=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="s2">&#39;, index=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2">, score=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="si">}</span><span class="s2">)&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Official string representation of the Particle.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;DataPoint(&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="s2">&#39;, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="si">}</span><span class="s2">)&quot;</span>
+    
+<div class="viewcode-block" id="Particle.get_tag">
+<a class="viewcode-back" href="../Particle.html#Particle.Particle.get_tag">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the tag value.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span></div>
+
+
+<div class="viewcode-block" id="Particle.get_index">
+<a class="viewcode-back" href="../Particle.html#Particle.Particle.get_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the index value.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span></div>
+
+    
+<div class="viewcode-block" id="Particle.set_tag">
+<a class="viewcode-back" href="../Particle.html#Particle.Particle.set_tag">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the tag value.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span></div>
+
+    
+<div class="viewcode-block" id="Particle.set_index">
+<a class="viewcode-back" href="../Particle.html#Particle.Particle.set_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the index value.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+</div>
+
+    
+<span class="c1"># Example usage</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>      
+    <span class="c1"># Create a particle object</span>
+    <span class="n">point1</span> <span class="o">=</span> <span class="n">Particle</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="s2">&quot;test.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">245</span><span class="p">,</span> <span class="n">initial_score</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="n">true_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;PS1&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+                 <span class="s1">&#39;PS2&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">}</span>
+    <span class="n">pred_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;PS1&#39;</span><span class="p">:</span> <span class="mi">250</span><span class="p">,</span>
+                 <span class="s1">&#39;PS2&#39;</span><span class="p">:</span> <span class="mi">250</span><span class="p">}</span>
+     
+    <span class="n">point1</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="n">pred_dict</span>
+           
+    <span class="nb">print</span><span class="p">(</span><span class="n">point1</span><span class="o">.</span><span class="n">calculate_score</span><span class="p">(</span><span class="n">true_dict</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">point1</span><span class="p">)</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Edward Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

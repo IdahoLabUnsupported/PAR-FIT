@@ -1,0 +1,10 @@
+Execution time for 10 particles: 1.427052 seconds.
+
+Execution time for 50 particles: 4.725321 seconds.
+
+Execution time for 100 particles: 9.561288 seconds.
+
+Execution time for 500 particles: 77.123136 seconds.
+
+Execution time for 1000 particles: 208.710838 seconds.
+

@@ -1,0 +1,22 @@
+******************MODEL CONFIGURATION******************
+Date of Creation: 2025-11-21
+Model name: LSTM_015_Q3_016_4096_T_version_4
+
+Input dimension: 2
+Hidden layers: 3
+Nodes per hidden layer: 30
+Output dimension: 1
+Time window sequence length: 5
+
+******************TRAINING CONFIGURATION******************
+Number of epochs: 15000
+Learning rate: 0.005
+Loss function: MSE
+Training set size: 399
+Training set origin: LSTM_015_Q3_016_4096_T_version_4.csv
+Batch size: 32
+Stop loss: 1e-10
+Weight decay: 4.717676544301932e-06
+Model post training error: 0.06775477528572083
+Training set start: 1
+Training set end: 4000

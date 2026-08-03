@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swarm (Particle Filter) &mdash; Particle Filter for Inference Testing 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Particle" href="Particle.html" />
+    <link rel="prev" title="Transient Example" href="Transient_Example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Particle Filter for Inference Testing
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Instructions.html">Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Transient_Example.html">Transient Example</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Details</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Swarm (Particle Filter)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#initialization">Initialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Swarm.Swarm"><code class="docutils literal notranslate"><span class="pre">Swarm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.calculate_score"><code class="docutils literal notranslate"><span class="pre">Swarm.calculate_score()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.calculate_weights"><code class="docutils literal notranslate"><span class="pre">Swarm.calculate_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.forward"><code class="docutils literal notranslate"><span class="pre">Swarm.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.future"><code class="docutils literal notranslate"><span class="pre">Swarm.future()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.get_best_score"><code class="docutils literal notranslate"><span class="pre">Swarm.get_best_score()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.get_mean_pred"><code class="docutils literal notranslate"><span class="pre">Swarm.get_mean_pred()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.get_std_pred"><code class="docutils literal notranslate"><span class="pre">Swarm.get_std_pred()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.predict"><code class="docutils literal notranslate"><span class="pre">Swarm.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.repopulate"><code class="docutils literal notranslate"><span class="pre">Swarm.repopulate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.report"><code class="docutils literal notranslate"><span class="pre">Swarm.report()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.set_population_cut"><code class="docutils literal notranslate"><span class="pre">Swarm.set_population_cut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.set_replacement_rate"><code class="docutils literal notranslate"><span class="pre">Swarm.set_replacement_rate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.set_threshold"><code class="docutils literal notranslate"><span class="pre">Swarm.set_threshold()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.sort_by_score"><code class="docutils literal notranslate"><span class="pre">Swarm.sort_by_score()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Swarm.Swarm.sort_by_weight"><code class="docutils literal notranslate"><span class="pre">Swarm.sort_by_weight()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Particle.html">Particle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Scoring.html">Scoring Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Weighting.html">Weighting Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Resample.html">Resampling Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Resample.html#preprocessing-resampling-functions">Preprocessing Resampling Functions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Particle Filter for Inference Testing</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Swarm (Particle Filter)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Swarm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="swarm-particle-filter">
+<h1>Swarm (Particle Filter)<a class="headerlink" href="#swarm-particle-filter" title="Link to this heading"></a></h1>
+<p>This page contains information on the class Swarm which is an aggregate of the class Particle. Each Swarm must have at least one Particle object.</p>
+<section id="initialization">
+<h2>Initialization<a class="headerlink" href="#initialization" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="Swarm.Swarm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Swarm.</span></span><span class="sig-name descname"><span class="pre">Swarm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_particles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scoring</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mape'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weighting</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repopulate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'multinomial'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocessing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replacement_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm" title="Link to this definition"></a></dt>
+<dd><p>Swarm implements a particle filter algorithm specifically for tracking in time-series data. The filter uses the dataset as a reference to conduct a search. When
+a value is provided, the particle filter will attempt to find the closest dataset and index within that dataset to match.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_particles</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Integer</span></code>) – Number of particles to be generated in the filter.</p></li>
+<li><p><strong>selected_cols</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">strings</span></code>, <em>optional</em>) – A list of strings that correspond to the column names of the data files. For example [“FL1”, “FL6”]. The default is None.</p></li>
+<li><p><strong>folder_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>) – If a folder path is provided, then all csv files in the path are loaded into the reference dataset of the particle filter. The default is None.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Pandas</span> <span class="pre">dictionary</span></code>) – If a data source is specified, then folder path is ignored and the data is used directly. The default is None.</p></li>
+<li><p><strong>index_range</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>, <em>optional</em>) – A tuple containing the number of rows within each csv to consider. The default is None and all rows are considered.</p></li>
+<li><p><strong>scoring</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>, <em>optional</em>) – The error scoring method to detmine how accurate a particle is. The default is “mape”.</p></li>
+<li><p><strong>weighting</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>, <em>optional</em>) – The method to weigh scores into a normalized array with sum of one. The default is “exp”.</p></li>
+<li><p><strong>repopulate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>, <em>optional</em>) – The method to repopulate the particles based on particle weight. The default is “multinomial”.</p></li>
+<li><p><strong>preprocessing</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>, <em>optional</em>) – The method to conduct preprocessing prior to resampling as needed.</p></li>
+<li><p><strong>replacement_rate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Float</span></code>, <em>optional</em>) – When the number of particles is less than the dataset size, this value determines how many new particles should be drawn from the entire dataset. A value of 0 (not recommended) suggests no particles from the entire population are drawn; only the particles that are currently drawn can repopulate the filter. The default is 0.2.</p></li>
+<li><p><strong>threshold</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Float</span></code>, <em>optional</em>) – Option for the threshold repopulation method. If the weight is less than the threshold, the particle is replaced. Otherwise unused. The default is 0.5.</p></li>
+<li><p><strong>population_cut</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Float</span></code>, <em>optional</em>) – Option for showing results. Not all particle performance is equivalent, poor performing particles introduce noise to the result. This value specifies what percentage of the best performing particles should be used as the output. The default is 0.75.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">None.</span></code></p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.calculate_score">
+<span class="sig-name descname"><span class="pre">calculate_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">true_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.calculate_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.calculate_score" title="Link to this definition"></a></dt>
+<dd><p>Score the error of every single Particle object based on the true_value reference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>true_value</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – The measured or true value to compare the particles against.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">None.</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.calculate_weights">
+<span class="sig-name descname"><span class="pre">calculate_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.calculate_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.calculate_weights" title="Link to this definition"></a></dt>
+<dd><p>Calculate the weight of each Particle after scoring.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">None.</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.forward" title="Link to this definition"></a></dt>
+<dd><p>Move each particle index forward by 1. If the max index is reached, do nothing and keep the current index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">None.</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.future">
+<span class="sig-name descname"><span class="pre">future</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timesteps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.future"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.future" title="Link to this definition"></a></dt>
+<dd><p>Calculates future values using the current population of particles. No resampling is performed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timesteps</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Integer</span></code>, <em>optional</em>) – The number of future timesteps to predict using the current population of particles. The default is 0.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>future_mean</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">dictionary</span></code>) – A list of prediction mean for all particles for all timesteps specified.</p></li>
+<li><p><strong>future_std</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">dictionary</span></code>) – A list of prediction standard deviation for all particles for all timesteps specified..</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.get_best_score">
+<span class="sig-name descname"><span class="pre">get_best_score</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.get_best_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.get_best_score" title="Link to this definition"></a></dt>
+<dd><p>Sort the particles by score then retrieve the best particle score.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Score of the best particle in the swarm.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.get_mean_pred">
+<span class="sig-name descname"><span class="pre">get_mean_pred</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.get_mean_pred"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.get_mean_pred" title="Link to this definition"></a></dt>
+<dd><p>Calculate the mean particle predictions for one or more columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cutoff</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <em>optional</em>) – If not -1, only the top fraction of particles (based on score) are used.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of mean values for each column.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.get_std_pred">
+<span class="sig-name descname"><span class="pre">get_std_pred</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.get_std_pred"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.get_std_pred" title="Link to this definition"></a></dt>
+<dd><p>Calculate the standard deviation of particle predictions for one or more columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>col</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Column(s) to compute the standard deviation for.</p></li>
+<li><p><strong>cutoff</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <em>optional</em>) – If not -1, only the top fraction of particles (based on score) are used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of standard deviations for each column.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.predict" title="Link to this definition"></a></dt>
+<dd><p>Get data from each particle using the source data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pt_predict</strong> – This is output prediciton of every particle from the filter as a dictionary. The dictionary contains the column name and the value. Optional return object. Particles are updated in place.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">dictionary</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.repopulate">
+<span class="sig-name descname"><span class="pre">repopulate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.repopulate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.repopulate" title="Link to this definition"></a></dt>
+<dd><p>Repopulates the particle filter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">None.</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.report">
+<span class="sig-name descname"><span class="pre">report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.report" title="Link to this definition"></a></dt>
+<dd><p>Determines the quantitative value for reliability based on instantenous proximity. Must be called.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.set_population_cut">
+<span class="sig-name descname"><span class="pre">set_population_cut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">population_cut</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.set_population_cut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.set_population_cut" title="Link to this definition"></a></dt>
+<dd><p>Set the value for excluding particles from the output calculation. This is because not all particles will be well performing (especially randomly sampled particles). This number (from 0 to 1) identifies what percentage of particles to consider for calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>population_cut</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Float</span></code>) – Percentage value between 0 and 1, determines which particles to use in calculations.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">None.</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.set_replacement_rate">
+<span class="sig-name descname"><span class="pre">set_replacement_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">replacement_rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.set_replacement_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.set_replacement_rate" title="Link to this definition"></a></dt>
+<dd><p>Set the replacement rate for resampling particles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>replacement_rate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Float</span></code>) – DESCRIPTION.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">None.</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.set_threshold">
+<span class="sig-name descname"><span class="pre">set_threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.set_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.set_threshold" title="Link to this definition"></a></dt>
+<dd><p>Set the threshold for when particles need to be replaced. Dumb way of particle repopulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>threshold</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Sets a hard limit for when particles need to be replaced. Limit between 0 and 1. Used in conjunction with the Threshold resampling method.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">None.</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.sort_by_score">
+<span class="sig-name descname"><span class="pre">sort_by_score</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.sort_by_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.sort_by_score" title="Link to this definition"></a></dt>
+<dd><p>Sort particles by score.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array of particles sorted from largest to smallest based on score. Run calculate_score() function first before calling.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Numpy</span> <span class="pre">array-like</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Swarm.Swarm.sort_by_weight">
+<span class="sig-name descname"><span class="pre">sort_by_weight</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Swarm.html#Swarm.sort_by_weight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Swarm.Swarm.sort_by_weight" title="Link to this definition"></a></dt>
+<dd><p>Sort particles by weight from largest to smallest. Run calculate_weights() function first before calling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array of weights sorted from largest to smallest.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Numpy</span> <span class="pre">array-like</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Transient_Example.html" class="btn btn-neutral float-left" title="Transient Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Particle.html" class="btn btn-neutral float-right" title="Particle" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Edward Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

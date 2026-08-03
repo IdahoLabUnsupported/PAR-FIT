@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Example &mdash; Particle Filter for Inference Testing 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Transient Example" href="Transient_Example.html" />
+    <link rel="prev" title="Instructions" href="Instructions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Particle Filter for Inference Testing
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Instructions.html">Instructions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#particle-filter-interactive-example">Particle Filter Interactive Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#steady-state-example-no-fault">Steady State Example (No Fault)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#steady-state-example-fault">Steady State Example (Fault)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#linear-example-no-fault">Linear Example (No Fault)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#linear-example-fault">Linear Example (Fault)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Transient_Example.html">Transient Example</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Swarm.html">Swarm (Particle Filter)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Particle.html">Particle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Scoring.html">Scoring Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Weighting.html">Weighting Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Resample.html">Resampling Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Resample.html#preprocessing-resampling-functions">Preprocessing Resampling Functions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Particle Filter for Inference Testing</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Example</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Example.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="example">
+<h1>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h1>
+<section id="particle-filter-interactive-example">
+<h2>Particle Filter Interactive Example<a class="headerlink" href="#particle-filter-interactive-example" title="Link to this heading"></a></h2>
+<p>This example demonstrates the overall theory of the particle filter. To begin this example, navigate to <cite>DARE/examples/Particle_Examples/</cite> and open  <cite>example_particle.py</cite>.</p>
+<p>Running Steps:</p>
+<ol class="arabic simple" start="0">
+<li><p>This example requires numpy and matplotlib packages to run. Ensure that these packages are available in your IDE before beginning this example.</p></li>
+<li><p>Clone the repository into your local directory.</p></li>
+<li><p>Navigate to the folder <cite>./DARE/examples/Particle_Examples/</cite>.</p></li>
+<li><p>Run the command line <cite>python example_particle.py</cite>. A new window should open and look like this:</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/interactive_PF.png"><img alt="_images/interactive_PF.png" class="align-center" src="_images/interactive_PF.png" style="width: 500px;" />
+</a>
+<p>The left distribution (“Normal Distribution”) is the unknown distribution that the particle filter will attempt to match through sampling. The right distribution is the particles that have accumulated and resampled to match the left distribution. At the top, there are options to adjust the distribution to observe how the particle filter reorients when a distribution shift occurs. The options are:</p>
+<ol class="arabic simple">
+<li><p>Mean: This is the left distribution mean. Changing the mean will shift the distribution; the particle filter will attempt to match the new mean.</p></li>
+<li><p>Variance: This is the left distribution variance (aka spread). The particle filter will attempt to match the variance if modified.</p></li>
+<li><p>Particles: This is the number of particles that are resampled/added at each update time step.</p></li>
+<li><p>Particle Freq(s): This is update time step for when particles are resampled and plotted.</p></li>
+<li><p>Graphic Freq(s): This is how often the visual graphic is updated from small intervals to long intervals.</p></li>
+</ol>
+<p>This example demonstrates the core principle of particle filters, where given an unknown distribution and measurements, the particles can track any arbitrary distribution. In the PAR-FIT program, this principle is used to track predictions to the underlying dataset.</p>
+</section>
+<section id="steady-state-example-no-fault">
+<h2>Steady State Example (No Fault)<a class="headerlink" href="#steady-state-example-no-fault" title="Link to this heading"></a></h2>
+<p>In this example, a particle filter is used to determine when a jump has occured from one steady state value to another. The second steady state value is also valid, represented in the reference dataset, and may represent a change in operational conditions. This example also illustrates the burn-in rate and effect of effective sampling size (ESS) mode of the particle filter for changes in state.</p>
+<figure class="align-center" id="ref-dataset">
+<a class="reference internal image-reference" href="_images/ref_dataset.png"><img alt="Short alt text" src="_images/ref_dataset.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 5 </span><span class="caption-text">Reference dataset representing normal condition for sensor. Each horizontal line represents a different valid steady-state condition of the sensor.</span><a class="headerlink" href="#ref-dataset" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Running Steps:</p>
+<ol class="arabic simple" start="0">
+<li><p>(Pre-step) This example requires numpy and matplotlib packages to run. Ensure that these packages are available in your IDE before beginning this example. Navigate to <cite>DARE/examples/Particle_Examples/steady_state_example/Steady_State_Example.py</cite> to begin.</p></li>
+<li><p>Run Steady_State_Example.py. Several figures will be generated. The particle filter is utilizing ESS and the multinomial resampling method.</p></li>
+</ol>
+<figure class="align-center" id="ss-nofault">
+<a class="reference internal image-reference" href="_images/SS_nofault.png"><img alt="Short alt text" src="_images/SS_nofault.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 6 </span><span class="caption-text">Particle filter mean and std w/ 100 particles, no fault present.</span><a class="headerlink" href="#ss-nofault" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="ss-nofault-sprt">
+<a class="reference internal image-reference" href="_images/SS_nofault_SPRT.png"><img alt="Short alt text" src="_images/SS_nofault_SPRT.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 7 </span><span class="caption-text">SPRT decision outcome; Abnormal condition is only detected at the step change.</span><a class="headerlink" href="#ss-nofault-sprt" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>In this case, the particle filter is able to track well when ESS is turned on. Notice that the uncertainty band does not converge as a result. This is a sideeffect of ESS as resampling is limited; particles cannot converge if they cannot be resampled. When ESS is turned off, the uncertainty can converge as normal however there are draw backs to it such as longer convergence time and more false positives.</p>
+<figure class="align-center" id="ss-nofault-noess-multinomial">
+<a class="reference internal image-reference" href="_images/SS_nofault_NoESS_Multinomial.png"><img alt="Short alt text" src="_images/SS_nofault_NoESS_Multinomial.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 8 </span><span class="caption-text">Multinomial resampling with no ESS.</span><a class="headerlink" href="#ss-nofault-noess-multinomial" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="ss-nofault-noess-multinomial-sprt">
+<a class="reference internal image-reference" href="_images/SS_nofault_NoESS_Multinomial_SPRT.png"><img alt="Short alt text" src="_images/SS_nofault_NoESS_Multinomial_SPRT.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 9 </span><span class="caption-text">SRPT output with multinomial resampling with no ESS.</span><a class="headerlink" href="#ss-nofault-noess-multinomial-sprt" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="steady-state-example-fault">
+<h2>Steady State Example (Fault)<a class="headerlink" href="#steady-state-example-fault" title="Link to this heading"></a></h2>
+<p>In this example, a particle filter is used to determine when a jump has occured from one steady state value to another. However, the second steady state value is not valid and out of scope relative to the reference dataset. This example may represent a broken sensor. This example also illustrates the burn-in rate and effect of effective sampling size (ESS) mode of the particle filter for changes in state.</p>
+<p>Running Steps:</p>
+<ol class="arabic simple" start="0">
+<li><p>(Pre-step) This example requires numpy and matplotlib packages to run. Ensure that these packages are available in your IDE before beginning this example. Navigate to <cite>DARE/examples/Particle_Examples/steady_state_fault_example/Steady_State_Fault_Example.py</cite> to begin.</p></li>
+<li><p>Run Steady_State_Fault_Example.py. Several figures will be generated. The particle filter is utilizing ESS and the multinomial resampling method.</p></li>
+</ol>
+<figure class="align-center" id="ss-fault-ess">
+<a class="reference internal image-reference" href="_images/SS_fault_ESS.png"><img alt="Short alt text" src="_images/SS_fault_ESS.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 10 </span><span class="caption-text">Particle filter mean and std w/ 100 particles, sensor fault present, no output.</span><a class="headerlink" href="#ss-fault-ess" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="ss-fault-ess-sprt">
+<a class="reference internal image-reference" href="_images/SS_fault_ESS_SPRT.png"><img alt="Short alt text" src="_images/SS_fault_ESS_SPRT.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 11 </span><span class="caption-text">SPRT decision outcome; Abnormal condition is detected when the sensor has failed.</span><a class="headerlink" href="#ss-fault-ess-sprt" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>In <a class="reference internal" href="#ss-fault-ess"><span class="std std-numref">Figure 10</span></a> and <a class="reference internal" href="#ss-fault-ess-sprt"><span class="std std-numref">Figure 11</span></a>, the particle filter is able to track well while the sensor is operationl. The output of the SPRT also suggests that the sensor is behaving as expected.  At timestep 100, the sensor fails and its output drops to zero. The particle filter detects this change and attempts to track. However, as the zero condition case is not represented in the dataset, the SPRT output indicates and abnormal condition.</p>
+<figure class="align-center" id="ss-fault-noess">
+<a class="reference internal image-reference" href="_images/SS_fault_noESS.png"><img alt="Short alt text" src="_images/SS_fault_noESS.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 12 </span><span class="caption-text">Multinomial resampling with fault and no ESS.</span><a class="headerlink" href="#ss-fault-noess" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>In <a class="reference internal" href="#ss-fault-noess"><span class="std std-numref">Figure 12</span></a>, ESS is turned off and sampling occurs at each time step. When the particle filter is tracking the sensor value consistently, the uncertainty band is small. When the fault occurs, the error band grows significantly and the particle filter can no longer track the sensor.</p>
+<figure class="align-center" id="ss-fault-noess-long">
+<a class="reference internal image-reference" href="_images/SS_fault_noESS_long.png"><img alt="Short alt text" src="_images/SS_fault_noESS_long.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 13 </span><span class="caption-text">Long run multinomial resampling with fault and no ESS.</span><a class="headerlink" href="#ss-fault-noess-long" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>In <a class="reference internal" href="#ss-fault-noess-long"><span class="std std-numref">Figure 13</span></a>, it is demonstrated that the model uncertainty will never converge if the reference data is absent. The particles’ output mean and standard deviation is unstable.</p>
+</section>
+<section id="linear-example-no-fault">
+<h2>Linear Example (No Fault)<a class="headerlink" href="#linear-example-no-fault" title="Link to this heading"></a></h2>
+<p>In this example, the particle filter’s performance on ramp functions is demonstrated. The reference data are still steady state constants similar to the steady state case. The intent of this example is to demonstrate how the particle filter reacts when the sensor is increasing or decreasing within its operational limits when the expected behavior is steady state.</p>
+<p>Running Steps:</p>
+<ol class="arabic simple" start="0">
+<li><p>(Pre-step) This example requires numpy and matplotlib packages to run. Ensure that these packages are available in your IDE before beginning this example. Navigate to <cite>DARE/examples/Particle_Examples/linear_nofault_example/Linear_noFault_Example.py</cite> to begin.</p></li>
+<li><p>Run Linear_noFault_Example.py. Several figures will be generated.</p></li>
+</ol>
+<figure class="align-center" id="linear-nofault-noess">
+<a class="reference internal image-reference" href="_images/Linear_nofault_noESS.png"><img alt="Short alt text" src="_images/Linear_nofault_noESS.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 14 </span><span class="caption-text">Linear ramp of sensor from one valid state to another with particle filter tracking.</span><a class="headerlink" href="#linear-nofault-noess" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="linear-nofault-noess-sprt">
+<a class="reference internal image-reference" href="_images/Linear_nofault_noESS_SPRT.png"><img alt="Short alt text" src="_images/Linear_nofault_noESS_SPRT.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 15 </span><span class="caption-text">Output of SPRT with ramp from one valid state to another with particle filter tracking.</span><a class="headerlink" href="#linear-nofault-noess-sprt" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>In this example, even though there is no reference data for linear ramping of sensors, only steady state constant values (see <a class="reference internal" href="#ref-dataset"><span class="std std-numref">Figure 5</span></a> for reference dataset), the SPRT output does not identify an abnormal state. This is because the sensor is still within its valid range (as specified by the reference dataset).</p>
+</section>
+<section id="linear-example-fault">
+<h2>Linear Example (Fault)<a class="headerlink" href="#linear-example-fault" title="Link to this heading"></a></h2>
+<p>In this example, the particle filter’s performance on ramp functions is demonstrated. Unlike the previous example, the sensor starts in a failed state and linearly ramps through the operational range and to another failed state.</p>
+<p>Running Steps:</p>
+<ol class="arabic simple" start="0">
+<li><p>(Pre-step) This example requires numpy and matplotlib packages to run. Ensure that these packages are available in your IDE before beginning this example. Navigate to <cite>DARE/examples/Particle_Examples/linear_fault_example/Linear_Fault_Example.py</cite> to begin.</p></li>
+<li><p>Run Linear_Fault_Example.py. Several figures will be generated.</p></li>
+</ol>
+<figure class="align-center" id="linear-fault-noess">
+<a class="reference internal image-reference" href="_images/Linear_fault_noESS.png"><img alt="Short alt text" src="_images/Linear_fault_noESS.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 16 </span><span class="caption-text">Linear ramp of sensor from one valid state to another with particle filter tracking.</span><a class="headerlink" href="#linear-fault-noess" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="linear-fault-noess-sprt">
+<a class="reference internal image-reference" href="_images/Linear_fault_noESS_SPRT.png"><img alt="Short alt text" src="_images/Linear_fault_noESS_SPRT.png" style="width: 500px;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 17 </span><span class="caption-text">Output of SPRT with ramp from one valid state to another with particle filter tracking.</span><a class="headerlink" href="#linear-fault-noess-sprt" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Two abnormal conditions are detected, at the beginning and end of the example as expected. In <a class="reference internal" href="#linear-fault-noess"><span class="std std-numref">Figure 16</span></a>, the particle filter distribution in the abnormal regions is a uniform distribution as no particle is better or worse than another particle.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Instructions.html" class="btn btn-neutral float-left" title="Instructions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Transient_Example.html" class="btn btn-neutral float-right" title="Transient Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Edward Chen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
